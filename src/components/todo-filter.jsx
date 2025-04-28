@@ -1,32 +1,24 @@
-import React, { useState } from 'react';
+import React from "react";
+import './todo-filter.css';
 
-
-
-export const TodoFilter = ({ onFilterChange }) => {
-  const [activeFilter, setActiveFilter] = useState('all');
-
-  const handleFilterClick = (filter) => {
-    setActiveFilter(filter);
-    onFilterChange?.(filter); 
-  };
-
+export const TodoFilter = ({ currentFilter, setFilter }) => {
   return (
     <div className="todo-filter">
       <button
-        className={`filter-btn ${activeFilter === 'all' ? 'active' : ''}`}
-        onClick={() => handleFilterClick('all')}
+        className={`filter-btn ${currentFilter === "all" ? "active" : ""}`}
+        onClick={() => setFilter("all")}
       >
         All
       </button>
       <button
-        className={`filter-btn ${activeFilter === 'active' ? 'active' : ''}`}
-        onClick={() => handleFilterClick('active')}
+        className={`filter-btn ${currentFilter === "active" ? "active" : ""}`}
+        onClick={() => setFilter("active")}
       >
         Active
       </button>
       <button
-        className={`filter-btn ${activeFilter === 'completed' ? 'active' : ''}`}
-        onClick={() => handleFilterClick('completed')}
+        className={`filter-btn ${currentFilter === "completed" ? "active" : ""}`}
+        onClick={() => setFilter("completed")}
       >
         Completed
       </button>

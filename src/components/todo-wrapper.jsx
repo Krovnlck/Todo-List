@@ -3,16 +3,37 @@ import { TodoForm } from "./todo-form";
 import { v4 as uuidv4 } from "uuid";
 import { Todo } from "./todo";
 import { EditTodoForm } from "./edit-todo-form";
+import { TodoFilter } from "./todo-filter";
+import './todo-wrapper.css'
 uuidv4();
 
 export const TodoWrapper = () => {
   const [todos, setTodos] = useState([]);
+  const [filter, setFilter] = useState("all");
+  const hasCompletedTodos = todos.some(todo => todo.completed);
+  
   const addTodo = (todo) => {
     setTodos([
       ...todos,
       { id: uuidv4(), task: todo, completed: false, isEditing: false },
     ]);
-    console.log(todos);
+  };
+
+  
+  
+
+  const deleteCompletedTodos = () => {
+    setTodos(todos.filter(todo => !todo.completed));
+  };
+  const getFilteredTodos = () => {
+    switch (filter) {
+      case "active":
+        return todos.filter(todo => !todo.completed);
+      case "completed":
+        return todos.filter(todo => todo.completed);
+      default:
+        return todos;
+    }
   };
 
   const toggleComplete = (id) => {
@@ -30,45 +51,59 @@ export const TodoWrapper = () => {
   const editTodo = (id) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === id
-          ? {
-              todo,
-              isEditing: !todo.isEditing,
-            }
-          : todo
+        todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo
       )
     );
   };
+
   const editTask = (task, id) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === id
-          ? {
-              todo,
-              task,
-              isEditing: !todo.isEditing,
-            }
-          : todo
+        todo.id === id ? { ...todo, task, isEditing: !todo.isEditing } : todo
       )
     );
   };
+
+  const activeTodosCount = todos.filter(todo => !todo.completed).length;
+
   return (
     <div className="TodoWrapper">
       <h1>Get Things Done!</h1>
       <TodoForm addTodo={addTodo} />
-      {todos.map((todo, index) =>
-        todo.isEditing ? (
-          <EditTodoForm editTodo={editTask} task={todo} />
-        ) : (
-          <Todo
-            task={todo}
-            key={index}
-            toggleComplete={toggleComplete}
-            deleteTodo={deleteTodo}
-            editTodoForm={editTodo}
-          />
-        )
-      )}
+      
+      <div className="filter-container">
+        <TodoFilter currentFilter={filter} setFilter={setFilter} />
+      </div>
+
+      <div className="tasks-list-container">
+        {getFilteredTodos().map((todo) => (
+          todo.isEditing ? (
+            <EditTodoForm editTodo={editTask} task={todo} key={todo.id} />
+          ) : (
+            <Todo
+              task={todo}
+              key={todo.id}
+              toggleComplete={toggleComplete}
+              deleteTodo={deleteTodo}
+              editTodoForm={editTodo}
+            />
+          )
+        ))}
+      </div>
+
+      <div className="footer-actions">
+  <span className="active-count">
+    {activeTodosCount} {activeTodosCount === 1 ? 'task' : 'tasks'} left
+  </span>
+  {hasCompletedTodos && (
+    <button 
+      onClick={deleteCompletedTodos}
+      className="clear-completed-btn"
+    >
+      Clear completed
+    </button>
+  )}
+</div>
     </div>
   );
 };

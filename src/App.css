@@ -89,4 +89,97 @@ h1 {
 .delete-icon {
   cursor: pointer;
 }
- 
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  gap: 1rem;
+}
+
+.clear-completed-btn {
+  padding: 0.5rem 1rem;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.clear-completed-btn:hover {
+  background: #cc0000;
+}
+
+.clear-completed-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.todo-filter {
+  margin-top: 0 !important;
+  margin-bottom: 1rem !important;
+}
+
+.TodoWrapper > .filter-container {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.tasks-list-container {
+  min-height: 200px;
+  margin-bottom: 1rem;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid #8758ff;
+  margin-top: auto;
+}
+
+
+.clear-completed-btn {
+  padding: 0.5rem 1rem;
+  background: #ff6b6b !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.clear-completed-btn:hover {
+  background: #ff5252 !important;
+}
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #8758ff;
+  color: #ffffff80;
+  font-size: 0.9rem;
+}
+
+.active-count {
+  padding: 0.3rem 0;
+}
+
+.clear-completed-btn {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  color: #ffffff80;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-completed-btn:hover {
+  color: #fff;
+  text-decoration: underline;
+}

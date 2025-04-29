@@ -1,27 +1,27 @@
 .todo-filter {
-    margin: 1rem 0;
     display: flex;
     gap: 0.5rem;
+    margin: 0.5rem 0;
+    justify-content: center;
   }
   
   .filter-btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    background: #f0f0f0;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-  }
-  
-  .filter-btn.active {
-    background: #646cff;
+    background: rgba(255, 255, 255, 0.1);
     color: white;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
   }
   
   .filter-btn:hover {
-    background: #ddd;
+    background: rgba(255, 255, 255, 0.2);
   }
   
-  .filter-btn.active:hover {
-    background: #535bf2;
+  .filter-btn.active {
+    background: #8758ff; 
+    color: white;
+    font-weight: 500;
   }

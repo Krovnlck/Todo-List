@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import { TodoForm } from './todo-form';
 import { Todo } from './todo';
@@ -6,17 +7,21 @@ import { EditTodoForm } from './edit-todo-form';
 import { TodoFilter } from './todo-filter';
 import './todo-wrapper.css';
 
-uuidv4();
-
-export const TodoWrapper = () => {
-  const [todos, setTodos] = useState([]);
+export const TodoWrapper = ({ initialTodos = [] }) => {
+  const [todos, setTodos] = useState(initialTodos);
   const [filter, setFilter] = useState('all');
   const hasCompletedTodos = todos.some((todo) => todo.completed);
 
   const addTodo = (todo) => {
     setTodos([
       ...todos,
-      { id: uuidv4(), task: todo, completed: false, isEditing: false },
+      {
+        id: uuidv4(),
+        task: todo,
+        completed: false,
+        isEditing: false,
+        createdAt: Date.now(),
+      },
     ]);
   };
 
@@ -105,6 +110,22 @@ export const TodoWrapper = () => {
       </div>
     </div>
   );
+};
+
+TodoWrapper.propTypes = {
+  initialTodos: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      task: PropTypes.string.isRequired,
+      completed: PropTypes.bool.isRequired,
+      isEditing: PropTypes.bool.isRequired,
+      createdAt: PropTypes.instanceOf(Date),
+    })
+  ),
+};
+
+TodoWrapper.defaultProps = {
+  initialTodos: [],
 };
 
 export default TodoWrapper;

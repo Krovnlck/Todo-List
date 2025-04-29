@@ -1,8 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './todo-filter.css';
 
 export const TodoFilter = ({ currentFilter, setFilter }) => (
   <div className='todo-filter'>
+    
     <button
       type='button'
       className={`filter-btn ${currentFilter === 'all' ? 'active' : ''}`}
@@ -25,4 +27,13 @@ export const TodoFilter = ({ currentFilter, setFilter }) => (
       Completed
     </button>
   </div>
+  
 );
+TodoFilter.defaultProps = {
+  currentFilter: 'all'
+};
+
+TodoFilter.propTypes = {
+  currentFilter: PropTypes.oneOf(['all', 'active', 'completed']), // Без isRequired
+  setFilter: PropTypes.func.isRequired
+};

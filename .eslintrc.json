@@ -4,8 +4,7 @@
         "es2021": true
     },
     "extends": [
-        "airbnb",
-        "prettier"
+        "airbnb"
     ],
     "overrides": [],
     "parserOptions": {
@@ -13,8 +12,7 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react",
-        "prettier"
+        "react"
     ],
     "rules": {
         "import/prefer-default-export": "off",

@@ -4,7 +4,6 @@
         "es2021": true
     },
     "extends": [
-        "plugin:react/recommended",
         "airbnb",
         "prettier"
     ],
@@ -27,10 +26,6 @@
         "no-console": "error",
         "comma-dangle": "off",
         "indent": "off",
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
         "semi": [
             "error",
             "always"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -16,16 +16,28 @@ export const Todo = ({
 	toggleComplete,
 	deleteTodo,
 	editTodoForm,
-	isRunning,
-	onStartTimer,
-	onStopTimer
+	updateElapsedTime
 }) => {
-	const [time, setTime] = useState(Date.now());
+	const [isRunning, setIsRunning] = useState(false);
+	const [time, setTime] = useState(task.elapsedTime || 0);
 
 	useEffect(() => {
-		const interval = setInterval(() => setTime(Date.now()), 5000);
-		return () => clearInterval(interval);
-	}, []);
+		let intervalId;
+		if (isRunning) {
+			intervalId = setInterval(() => {
+				setTime(prevTime => {
+					const newTime = prevTime + 1000;
+					updateElapsedTime(task.id, newTime);
+					return newTime;
+				});
+			}, 1000);
+		}
+		return () => {
+			if (intervalId) {
+				clearInterval(intervalId);
+			}
+		};
+	}, [isRunning, task.id, updateElapsedTime]);
 
 	const formatTime = (ms) => {
 		const seconds = Math.floor((ms / 1000) % 60);
@@ -35,6 +47,10 @@ export const Todo = ({
 		return `${hours.toString().padStart(2, '0')}:${minutes
 			.toString()
 			.padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+	};
+
+	const handleStartStop = () => {
+		setIsRunning(prev => !prev);
 	};
 
 	return (
@@ -49,14 +65,17 @@ export const Todo = ({
 					</p>
 					<div className='timer-container'>
 						<span className='timer-display'>
-							{formatTime(task.elapsedTime)}
+							{formatTime(time)}
 						</span>
 						<button
 							type='button'
 							className={`timer-btn ${isRunning ? 'running' : ''}`}
-							onClick={isRunning ? onStopTimer : onStartTimer}
+							onClick={handleStartStop}
+							onMouseDown={(e) => e.preventDefault()}
 						>
-							<FontAwesomeIcon icon={isRunning ? faCirclePause : faCirclePlay} />
+							<FontAwesomeIcon
+								icon={isRunning ? faCirclePause : faCirclePlay}
+							/>
 						</button>
 					</div>
 				</div>
@@ -64,7 +83,7 @@ export const Todo = ({
 					<small className='created-at'>
 						<FontAwesomeIcon icon={faClock} />
 						{' '}
-						{formatDistance(time, task.createdAt)}
+						{formatDistance(new Date(), task.createdAt, { addSuffix: true })}
 					</small>
 				)}
 			</div>
@@ -93,14 +112,17 @@ Todo.propTypes = {
 		id: PropTypes.string.isRequired,
 		task: PropTypes.string.isRequired,
 		completed: PropTypes.bool.isRequired,
-		isEditing: PropTypes.bool.isRequired,
-		createdAt: PropTypes.string,
-		elapsedTime: PropTypes.number,
+		createdAt: PropTypes.oneOfType([
+			PropTypes.instanceOf(Date),
+			PropTypes.number,
+			PropTypes.string
+		]),
+		elapsedTime: PropTypes.number
 	}).isRequired,
 	toggleComplete: PropTypes.func.isRequired,
 	deleteTodo: PropTypes.func.isRequired,
 	editTodoForm: PropTypes.func.isRequired,
-	isRunning: PropTypes.bool.isRequired,
-	onStartTimer: PropTypes.func.isRequired,
-	onStopTimer: PropTypes.func.isRequired,
+	updateElapsedTime: PropTypes.func.isRequired
 };
+
+export default Todo;

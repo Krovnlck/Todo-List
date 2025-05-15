@@ -12,7 +12,9 @@
   "plugins": ["react"],
   "rules": {
     "indent": "off",
-    "jsx-quotes": [2, "prefer-single"],
+    "react/jsx-indent": "off",
+    "react/jsx-indent-props": "off",
+    "jsx-quotes": "off",
     "linebreak-style": 0,
     "import/prefer-default-export": "off",
     "jsx-a11y/no-noninteractive-element-interactions": "off",

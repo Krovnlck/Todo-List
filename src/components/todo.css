@@ -1,0 +1,69 @@
+.task-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.task-main p {
+  margin: 0;
+  flex: 1;
+}
+
+.timer-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.timer-display {
+  font-family: monospace;
+  font-size: 1rem;
+  color: #666;
+  background-color: #f5f5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.timer-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.timer-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Стили для кнопки Play */
+.timer-btn:not(.running) {
+  color: #4CAF50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.timer-btn:not(.running):hover {
+  background-color: rgba(76, 175, 80, 0.2);
+  transform: scale(1.05);
+}
+
+/* Стили для кнопки Pause */
+.timer-btn.running {
+  color: #f44336;
+  background-color: rgba(244, 67, 54, 0.1);
+}
+
+.timer-btn.running:hover {
+  background-color: rgba(244, 67, 54, 0.2);
+  transform: scale(1.05);
+} 

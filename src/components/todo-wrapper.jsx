@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import { TodoForm } from './todo-form';
@@ -8,27 +8,31 @@ import { TodoFilter } from './todo-filter';
 import './todo-wrapper.css';
 
 export const TodoWrapper = ({ initialTodos = [] }) => {
-	const [todos, setTodos] = useState(() => {
-		const savedTodos = localStorage.getItem('todos');
-		return savedTodos ? JSON.parse(savedTodos) : initialTodos;
-	});
+	const [todos, setTodos] = useState(initialTodos);
 	const [filter, setFilter] = useState('all');
+	const [runningTimers, setRunningTimers] = useState(new Set());
 	const hasCompletedTodos = todos.some((todo) => todo.completed);
-
-	useEffect(() => {
-		localStorage.setItem('todos', JSON.stringify(todos));
-	}, [todos]);
 
 	const updateElapsedTime = (id, elapsedTime) => {
 		setTodos(prevTodos => prevTodos.map(todo => {
 			if (todo.id === id) {
+				// Если это обратный отсчет, вычитаем время
+				if (todo.countdownSeconds !== null) {
+					const remainingTime = todo.initialCountdown - elapsedTime;
+					// Если время вышло, помечаем задачу как выполненную
+					if (remainingTime <= 0) {
+						return { ...todo, completed: true, elapsedTime: 0 };
+					}
+					return { ...todo, elapsedTime };
+				}
+				// Для обычного таймера просто обновляем прошедшее время
 				return { ...todo, elapsedTime };
 			}
 			return todo;
 		}));
 	};
 
-	const addTodo = (todo) => {
+	const addTodo = (todo, countdownSeconds) => {
 		const newTodo = {
 			id: uuidv4(),
 			task: todo,
@@ -36,21 +40,47 @@ export const TodoWrapper = ({ initialTodos = [] }) => {
 			isEditing: false,
 			createdAt: Date.now(),
 			elapsedTime: 0,
+			countdownSeconds,
+			initialCountdown: countdownSeconds
 		};
 		setTodos([...todos, newTodo]);
 	};
 
 	const deleteCompletedTodos = () => {
+		const completedIds = todos.filter(todo => todo.completed).map(todo => todo.id);
+		setRunningTimers(prev => {
+			const newTimers = new Set(prev);
+			completedIds.forEach(id => newTimers.delete(id));
+			return newTimers;
+		});
 		setTodos(todos.filter((todo) => !todo.completed));
 	};
 
 	const deleteTodo = (id) => {
+		setRunningTimers(prev => {
+			const newTimers = new Set(prev);
+			newTimers.delete(id);
+			return newTimers;
+		});
 		setTodos(todos.filter((todo) => todo.id !== id));
 	};
 
 	const toggleComplete = (id) => {
 		setTodos(
-			todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+			todos.map((todo) => {
+				if (todo.id === id) {
+					const completed = !todo.completed;
+					if (completed) {
+						setRunningTimers(prev => {
+							const newTimers = new Set(prev);
+							newTimers.delete(id);
+							return newTimers;
+						});
+					}
+					return { ...todo, completed };
+				}
+				return todo;
+			})
 		);
 	};
 
@@ -66,6 +96,12 @@ export const TodoWrapper = ({ initialTodos = [] }) => {
 		);
 	};
 
+	const cancelEdit = (id) => {
+		setTodos(
+			todos.map((todo) => (todo.id === id ? { ...todo, isEditing: false } : todo))
+		);
+	};
+
 	const getFilteredTodos = () => {
 		switch (filter) {
 			case 'active':
@@ -78,6 +114,18 @@ export const TodoWrapper = ({ initialTodos = [] }) => {
 	};
 
 	const activeTodosCount = todos.filter((todo) => !todo.completed).length;
+
+	const toggleTimer = (id) => {
+		setRunningTimers(prev => {
+			const newTimers = new Set(prev);
+			if (newTimers.has(id)) {
+				newTimers.delete(id);
+			} else {
+				newTimers.add(id);
+			}
+			return newTimers;
+		});
+	};
 
 	return (
 		<div className='TodoWrapper'>
@@ -95,6 +143,7 @@ export const TodoWrapper = ({ initialTodos = [] }) => {
 							editTodo={editTask}
 							task={todo}
 							key={todo.id}
+							onCancel={() => cancelEdit(todo.id)}
 						/>
 					) : (
 						<Todo
@@ -104,6 +153,8 @@ export const TodoWrapper = ({ initialTodos = [] }) => {
 							deleteTodo={deleteTodo}
 							editTodoForm={editTodo}
 							updateElapsedTime={updateElapsedTime}
+							isRunning={runningTimers.has(todo.id)}
+							toggleTimer={toggleTimer}
 						/>
 					)
 				))}

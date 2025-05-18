@@ -1,0 +1,37 @@
+.input-group {
+	display: flex;
+	gap: 1rem;
+	width: 100%;
+	align-items: flex-start;
+}
+
+.timer-inputs {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	background-color: var(--background-alt);
+	padding: 0.5rem;
+	border-radius: 12px;
+	margin-top: -4px;
+}
+
+.time-input {
+	width: 3rem;
+	padding: 0.5rem;
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	background-color: var(--background);
+	color: white;
+	text-align: center;
+	font-size: 0.9rem;
+}
+
+.time-input::placeholder {
+	color: white;
+	opacity: 0.7;
+}
+
+.timer-inputs span {
+	color: white;
+	font-weight: bold;
+} 

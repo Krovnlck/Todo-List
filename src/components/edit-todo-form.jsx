@@ -1,29 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-export const EditTodoForm = ({ editTodo, task }) => {
+export const EditTodoForm = ({ editTodo, task, onCancel }) => {
 	const [value, setValue] = useState(task.task);
+	const formRef = useRef(null);
+	const inputRef = useRef(null);
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (formRef.current && !formRef.current.contains(event.target)) {
+				onCancel();
+			}
+		};
+
+		const handleEscape = (event) => {
+			if (event.key === 'Escape') {
+				onCancel();
+			}
+		};
+
+		document.addEventListener('mousedown', handleClickOutside);
+		document.addEventListener('keydown', handleEscape);
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+			document.removeEventListener('keydown', handleEscape);
+		};
+	}, [onCancel]);
+
+	useEffect(() => {
+		if (inputRef.current) {
+			inputRef.current.focus();
+		}
+	}, []);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-
-		editTodo(value, task.id);
-
-		setValue('');
+		if (value.trim()) {
+			editTodo(value, task.id);
+		} else {
+			onCancel();
+		}
 	};
+
 	return (
-  <form className='TodoForm' onSubmit={handleSubmit}>
-    <input
-      type='text'
-      className='todo-input'
-      value={value}
-      placeholder='Update Task'
-      onChange={(e) => setValue(e.target.value)}
-    />
-    <button type='submit' className='todo-btn'>
-      Update Task
-    </button>
-  </form>
+		<form className='TodoForm' onSubmit={handleSubmit} ref={formRef}>
+			<input
+				type='text'
+				className='todo-input'
+				value={value}
+				placeholder='Update Task'
+				onChange={(e) => setValue(e.target.value)}
+				ref={inputRef}
+			/>
+			<button type='submit' className='todo-btn'>
+				Update Task
+			</button>
+		</form>
 	);
 };
 
@@ -32,5 +65,6 @@ EditTodoForm.propTypes = {
 	task: PropTypes.shape({
 		id: PropTypes.string.isRequired,
 		task: PropTypes.string.isRequired
-	}).isRequired
+	}).isRequired,
+	onCancel: PropTypes.func.isRequired
 };

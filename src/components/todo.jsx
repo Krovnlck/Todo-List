@@ -16,9 +16,10 @@ export const Todo = ({
 	toggleComplete,
 	deleteTodo,
 	editTodoForm,
-	updateElapsedTime
+	updateElapsedTime,
+	isRunning,
+	toggleTimer
 }) => {
-	const [isRunning, setIsRunning] = useState(false);
 	const [time, setTime] = useState(task.elapsedTime || 0);
 
 	useEffect(() => {
@@ -26,7 +27,7 @@ export const Todo = ({
 		if (isRunning) {
 			intervalId = setInterval(() => {
 				setTime(prevTime => {
-					const newTime = prevTime + 1000;
+					const newTime = prevTime + 1;
 					updateElapsedTime(task.id, newTime);
 					return newTime;
 				});
@@ -39,18 +40,34 @@ export const Todo = ({
 		};
 	}, [isRunning, task.id, updateElapsedTime]);
 
-	const formatTime = (ms) => {
-		const seconds = Math.floor((ms / 1000) % 60);
-		const minutes = Math.floor((ms / 1000 / 60) % 60);
-		const hours = Math.floor(ms / 1000 / 60 / 60);
+	const formatTime = (seconds) => {
+		if (task.countdownSeconds !== null) {
+			// Для обратного отсчета показываем оставшееся время
+			const remainingSeconds = task.initialCountdown - seconds;
+			if (remainingSeconds <= 0) return '00:00:00';
+			const hours = Math.floor(remainingSeconds / 3600);
+			const minutes = Math.floor((remainingSeconds % 3600) / 60);
+			const secs = remainingSeconds % 60;
+
+			return `${hours.toString().padStart(2, '0')}:${minutes
+				.toString()
+				.padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+		}
+
+		// Для обычного таймера показываем прошедшее время
+		const hours = Math.floor(seconds / 3600);
+		const minutes = Math.floor((seconds % 3600) / 60);
+		const remainingSeconds = seconds % 60;
 
 		return `${hours.toString().padStart(2, '0')}:${minutes
 			.toString()
-			.padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+			.padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
 	};
 
 	const handleStartStop = () => {
-		setIsRunning(prev => !prev);
+		if (!task.completed) {
+			toggleTimer(task.id);
+		}
 	};
 
 	return (
@@ -67,16 +84,18 @@ export const Todo = ({
 						<span className='timer-display'>
 							{formatTime(time)}
 						</span>
-						<button
-							type='button'
-							className={`timer-btn ${isRunning ? 'running' : ''}`}
-							onClick={handleStartStop}
-							onMouseDown={(e) => e.preventDefault()}
-						>
-							<FontAwesomeIcon
-								icon={isRunning ? faCirclePause : faCirclePlay}
-							/>
-						</button>
+						{!task.completed && (
+							<button
+								type='button'
+								className={`timer-btn ${isRunning ? 'running' : ''}`}
+								onClick={handleStartStop}
+								onMouseDown={(e) => e.preventDefault()}
+							>
+								<FontAwesomeIcon
+									icon={isRunning ? faCirclePause : faCirclePlay}
+								/>
+							</button>
+						)}
 					</div>
 				</div>
 				{task.createdAt && (
@@ -117,12 +136,16 @@ Todo.propTypes = {
 			PropTypes.number,
 			PropTypes.string
 		]),
-		elapsedTime: PropTypes.number
+		elapsedTime: PropTypes.number,
+		countdownSeconds: PropTypes.number,
+		initialCountdown: PropTypes.number
 	}).isRequired,
 	toggleComplete: PropTypes.func.isRequired,
 	deleteTodo: PropTypes.func.isRequired,
 	editTodoForm: PropTypes.func.isRequired,
-	updateElapsedTime: PropTypes.func.isRequired
+	updateElapsedTime: PropTypes.func.isRequired,
+	isRunning: PropTypes.bool.isRequired,
+	toggleTimer: PropTypes.func.isRequired
 };
 
 export default Todo;

@@ -16,16 +16,13 @@ export const TodoWrapper = ({ initialTodos = [] }) => {
 	const updateElapsedTime = (id, elapsedTime) => {
 		setTodos(prevTodos => prevTodos.map(todo => {
 			if (todo.id === id) {
-				// Если это обратный отсчет, вычитаем время
 				if (todo.countdownSeconds !== null) {
 					const remainingTime = todo.initialCountdown - elapsedTime;
-					// Если время вышло, помечаем задачу как выполненную
 					if (remainingTime <= 0) {
 						return { ...todo, completed: true, elapsedTime: 0 };
 					}
 					return { ...todo, elapsedTime };
 				}
-				// Для обычного таймера просто обновляем прошедшее время
 				return { ...todo, elapsedTime };
 			}
 			return todo;

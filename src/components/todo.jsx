@@ -42,7 +42,6 @@ export const Todo = ({
 
 	const formatTime = (seconds) => {
 		if (task.countdownSeconds !== null) {
-			// Для обратного отсчета показываем оставшееся время
 			const remainingSeconds = task.initialCountdown - seconds;
 			if (remainingSeconds <= 0) return '00:00:00';
 			const hours = Math.floor(remainingSeconds / 3600);
@@ -54,7 +53,6 @@ export const Todo = ({
 				.padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 		}
 
-		// Для обычного таймера показываем прошедшее время
 		const hours = Math.floor(seconds / 3600);
 		const minutes = Math.floor((seconds % 3600) / 60);
 		const remainingSeconds = seconds % 60;

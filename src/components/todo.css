@@ -46,7 +46,6 @@
   height: 18px;
 }
 
-/* Стили для кнопки Play */
 .timer-btn:not(.running) {
   color: #4CAF50;
   background-color: rgba(76, 175, 80, 0.1);
@@ -57,7 +56,6 @@
   transform: scale(1.05);
 }
 
-/* Стили для кнопки Pause */
 .timer-btn.running {
   color: #f44336;
   background-color: rgba(244, 67, 54, 0.1);

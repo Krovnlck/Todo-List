@@ -32,6 +32,6 @@ TodoFilter.defaultProps = {
 };
 
 TodoFilter.propTypes = {
-	currentFilter: PropTypes.oneOf(['all', 'active', 'completed']), // Без isRequired
+	currentFilter: PropTypes.oneOf(['all', 'active', 'completed']),
 	setFilter: PropTypes.func.isRequired,
 };
